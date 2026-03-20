@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import NewProspect from "./pages/NewProspect";
+import GenerateMessage from "./pages/GenerateMessage";
+import ProspectMessage from "./pages/ProspectMessage";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./hooks/useAuth";
 
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/prospects/new" element={<ProtectedRoute><NewProspect /></ProtectedRoute>} />
+          <Route path="/prospects/:id/generate" element={<ProtectedRoute><GenerateMessage /></ProtectedRoute>} />
+          <Route path="/prospects/:id/message/:msgId" element={<ProtectedRoute><ProspectMessage /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
