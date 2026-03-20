@@ -328,7 +328,7 @@ const ProspectMessage = () => {
                 size="sm"
                 onClick={handleMarkSent}
                 disabled={saving}
-                className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white ml-auto"
+                className="gap-1.5 text-xs bg-success hover:bg-success/90 text-success-foreground ml-auto"
               >
                 <Send className="h-3.5 w-3.5" />
                 Marquer comme envoyé
