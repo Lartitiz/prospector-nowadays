@@ -122,16 +122,25 @@ const GenerateMessage = () => {
         })
         .eq("id", id);
 
-      // 2. Call edge function
+      // 2. Fetch profile for the edge function
+      const { data: profileData } = await supabase
+        .from("my_profile")
+        .select("*")
+        .limit(1)
+        .maybeSingle();
+
+      // 3. Call edge function with all data
       const { data: fnData, error: fnError } = await supabase.functions.invoke(
         "generate-prospection-message",
         {
           body: {
             prospect_id: id,
+            research_data: research,
             intention,
             intention_detail: intentionDetail,
             personal_context: personalContext,
             channel,
+            my_profile: profileData,
           },
         }
       );
