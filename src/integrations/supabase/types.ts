@@ -14,7 +14,155 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          contenu: string | null
+          created_at: string
+          genere_par_ia: boolean | null
+          id: string
+          prospect_id: string | null
+          statut: string | null
+          sujet: string | null
+          type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contenu?: string | null
+          created_at?: string
+          genere_par_ia?: boolean | null
+          id?: string
+          prospect_id?: string | null
+          statut?: string | null
+          sujet?: string | null
+          type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contenu?: string | null
+          created_at?: string
+          genere_par_ia?: boolean | null
+          id?: string
+          prospect_id?: string | null
+          statut?: string | null
+          sujet?: string | null
+          type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      my_profile: {
+        Row: {
+          created_at: string
+          id: string
+          linkedin: string | null
+          nom: string | null
+          pitch: string | null
+          preuves_sociales: string | null
+          references_formation: string | null
+          role: string | null
+          signature_email: string | null
+          site_web: string | null
+          specialite: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          linkedin?: string | null
+          nom?: string | null
+          pitch?: string | null
+          preuves_sociales?: string | null
+          references_formation?: string | null
+          role?: string | null
+          signature_email?: string | null
+          site_web?: string | null
+          specialite?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          linkedin?: string | null
+          nom?: string | null
+          pitch?: string | null
+          preuves_sociales?: string | null
+          references_formation?: string | null
+          role?: string | null
+          signature_email?: string | null
+          site_web?: string | null
+          specialite?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prospects: {
+        Row: {
+          created_at: string
+          email: string | null
+          entreprise: string | null
+          id: string
+          linkedin: string | null
+          nom: string | null
+          notes: string | null
+          poste: string | null
+          recherche_ia: Json | null
+          score_ia: number | null
+          secteur: string | null
+          statut: string | null
+          taille_entreprise: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          entreprise?: string | null
+          id?: string
+          linkedin?: string | null
+          nom?: string | null
+          notes?: string | null
+          poste?: string | null
+          recherche_ia?: Json | null
+          score_ia?: number | null
+          secteur?: string | null
+          statut?: string | null
+          taille_entreprise?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          entreprise?: string | null
+          id?: string
+          linkedin?: string | null
+          nom?: string | null
+          notes?: string | null
+          poste?: string | null
+          recherche_ia?: Json | null
+          score_ia?: number | null
+          secteur?: string | null
+          statut?: string | null
+          taille_entreprise?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
