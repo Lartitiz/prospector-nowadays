@@ -87,7 +87,7 @@ const GenerateMessage = () => {
     }
 
     setProspect(data as Prospect);
-    setResearch((data.recherche_ia as ResearchResult) || null);
+    setResearch((data.recherche_ia as unknown as ResearchResult) || null);
 
     // Restore previous intention if set
     const ri = data.recherche_ia as any;
