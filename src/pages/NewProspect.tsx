@@ -77,10 +77,17 @@ const NewProspect = () => {
           .eq("id", pid);
       }
 
-      // Step 2: Call edge function
+      // Step 2: Call edge function with company info
       const { data: fnData, error: fnError } = await supabase.functions.invoke(
         "research-prospect",
-        { body: { prospect_id: pid } }
+        {
+          body: {
+            prospect_id: pid,
+            company_name: nom,
+            company_url: siteWeb,
+            company_type: typeStructure,
+          },
+        }
       );
 
       if (fnError) throw fnError;
