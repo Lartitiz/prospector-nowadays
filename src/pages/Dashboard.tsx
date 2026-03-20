@@ -3,8 +3,7 @@ import { useProspects } from "@/hooks/useProspects";
 import DashboardCounters from "@/components/dashboard/DashboardCounters";
 import DashboardFilters, { type Filters } from "@/components/dashboard/DashboardFilters";
 import KanbanBoard from "@/components/dashboard/KanbanBoard";
-import NewProspectDialog from "@/components/dashboard/NewProspectDialog";
-import { Settings } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -67,7 +66,10 @@ const Dashboard = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl">Pipeline</h1>
         <div className="flex items-center gap-2">
-          <NewProspectDialog />
+          <Button size="sm" className="gap-1.5" onClick={() => navigate("/prospects/new")}>
+            <Plus className="h-4 w-4" />
+            Nouveau prospect
+          </Button>
           <Button
             variant="ghost"
             size="icon"
