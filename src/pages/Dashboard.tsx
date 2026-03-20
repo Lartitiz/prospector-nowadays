@@ -3,8 +3,7 @@ import { useProspects } from "@/hooks/useProspects";
 import DashboardCounters from "@/components/dashboard/DashboardCounters";
 import DashboardFilters, { type Filters } from "@/components/dashboard/DashboardFilters";
 import KanbanBoard from "@/components/dashboard/KanbanBoard";
-import NewProspectDialog from "@/components/dashboard/NewProspectDialog";
-import { Settings } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
