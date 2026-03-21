@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+  const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
@@ -28,8 +28,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!lovableApiKey) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY non configurée." }), {
+    if (!anthropicKey) {
+      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY non configurée. Ajoutez-la dans les secrets." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -170,33 +170,35 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
   "strategy_notes": "2-4 phrases expliquant ta stratégie rédactionnelle : pourquoi cet angle d'attaque, quel élément d'immersion tu as choisi et pourquoi, quel ton tu as adopté"
 }`;
 
-    // Call Lovable AI gateway
+    // Call Claude Opus with 120s timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    let aiResponse: Response;
+    let claudeResponse: Response;
     try {
-      aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${lovableApiKey}`,
+          "x-api-key": anthropicKey,
+          "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-pro",
+          model: "claude-opus-4-20250514",
+          max_tokens: 2048,
           messages: [{ role: "user", content: prompt }],
         }),
       });
     } catch (err) {
       clearTimeout(timeoutId);
       const isTimeout = err instanceof DOMException && err.name === "AbortError";
-      console.error("AI fetch error:", isTimeout ? "TIMEOUT" : err);
+      console.error("Claude fetch error:", isTimeout ? "TIMEOUT" : err);
       return new Response(
         JSON.stringify({
           error: isTimeout
             ? "La génération a dépassé le délai de 120 secondes. Réessayez."
-            : `Erreur de connexion : ${err instanceof Error ? err.message : "Erreur inconnue"}`,
+            : `Erreur de connexion à Claude : ${err instanceof Error ? err.message : "Erreur inconnue"}`,
         }),
         { status: isTimeout ? 504 : 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -204,13 +206,14 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
 
     clearTimeout(timeoutId);
 
-    if (!aiResponse.ok) {
-      const errBody = await aiResponse.text();
-      console.error("AI API error:", aiResponse.status, errBody);
+    if (!claudeResponse.ok) {
+      const errBody = await claudeResponse.text();
+      console.error("Claude API error:", claudeResponse.status, errBody);
 
-      let userMessage = `Erreur IA (${aiResponse.status}).`;
-      if (aiResponse.status === 429) userMessage = "Limite de requêtes atteinte. Attendez quelques minutes.";
-      else if (aiResponse.status === 402) userMessage = "Crédits épuisés. Ajoutez des crédits dans les paramètres.";
+      let userMessage = `Erreur Claude (${claudeResponse.status}).`;
+      if (claudeResponse.status === 401) userMessage = "Clé API Anthropic invalide. Vérifiez ANTHROPIC_API_KEY.";
+      else if (claudeResponse.status === 429) userMessage = "Limite de requêtes Claude atteinte. Attendez quelques minutes.";
+      else if (claudeResponse.status === 529) userMessage = "Claude est surchargé. Réessayez dans quelques instants.";
 
       return new Response(
         JSON.stringify({ error: userMessage }),
@@ -218,8 +221,11 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
       );
     }
 
-    const aiData = await aiResponse.json();
-    let textContent = aiData.choices?.[0]?.message?.content || "";
+    const claudeData = await claudeResponse.json();
+    let textContent = "";
+    for (const block of claudeData.content || []) {
+      if (block.type === "text") textContent += block.text;
+    }
 
     // Parse structured response
     let messageResult: { subject?: string; message: string; strategy_notes?: string };
