@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const TIMEOUT_MS = 45_000;
+const TIMEOUT_MS = 120_000;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
