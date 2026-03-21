@@ -1,0 +1,1 @@
+ALTER TABLE public.prospects ALTER COLUMN statut SET DEFAULT 'a_rechercher';
