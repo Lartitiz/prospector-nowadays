@@ -170,35 +170,33 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
   "strategy_notes": "2-4 phrases expliquant ta stratégie rédactionnelle : pourquoi cet angle d'attaque, quel élément d'immersion tu as choisi et pourquoi, quel ton tu as adopté"
 }`;
 
-    // Call Claude Opus with 120s timeout
+    // Call Lovable AI gateway
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    let claudeResponse: Response;
+    let aiResponse: Response;
     try {
-      claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
+      aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": anthropicKey,
-          "anthropic-version": "2023-06-01",
+          "Authorization": `Bearer ${lovableApiKey}`,
         },
         body: JSON.stringify({
-          model: "claude-opus-4-0-20250115",
-          max_tokens: 2048,
+          model: "google/gemini-2.5-pro",
           messages: [{ role: "user", content: prompt }],
         }),
       });
     } catch (err) {
       clearTimeout(timeoutId);
       const isTimeout = err instanceof DOMException && err.name === "AbortError";
-      console.error("Claude fetch error:", isTimeout ? "TIMEOUT" : err);
+      console.error("AI fetch error:", isTimeout ? "TIMEOUT" : err);
       return new Response(
         JSON.stringify({
           error: isTimeout
-            ? "La génération a dépassé le délai de 120 secondes. Claude Opus peut être lent — réessayez ou réduisez la complexité."
-            : `Erreur de connexion à Claude : ${err instanceof Error ? err.message : "Erreur inconnue"}`,
+            ? "La génération a dépassé le délai de 120 secondes. Réessayez."
+            : `Erreur de connexion : ${err instanceof Error ? err.message : "Erreur inconnue"}`,
         }),
         { status: isTimeout ? 504 : 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -206,14 +204,13 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
 
     clearTimeout(timeoutId);
 
-    if (!claudeResponse.ok) {
-      const errBody = await claudeResponse.text();
-      console.error("Claude API error:", claudeResponse.status, errBody);
+    if (!aiResponse.ok) {
+      const errBody = await aiResponse.text();
+      console.error("AI API error:", aiResponse.status, errBody);
 
-      let userMessage = `Erreur Claude (${claudeResponse.status}).`;
-      if (claudeResponse.status === 401) userMessage = "Clé API Anthropic invalide. Vérifiez ANTHROPIC_API_KEY dans les secrets.";
-      else if (claudeResponse.status === 429) userMessage = "Limite de requêtes Claude atteinte. Attendez quelques minutes.";
-      else if (claudeResponse.status === 529) userMessage = "Claude est surchargé. Réessayez dans quelques instants.";
+      let userMessage = `Erreur IA (${aiResponse.status}).`;
+      if (aiResponse.status === 429) userMessage = "Limite de requêtes atteinte. Attendez quelques minutes.";
+      else if (aiResponse.status === 402) userMessage = "Crédits épuisés. Ajoutez des crédits dans les paramètres.";
 
       return new Response(
         JSON.stringify({ error: userMessage }),
@@ -221,11 +218,8 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
       );
     }
 
-    const claudeData = await claudeResponse.json();
-    let textContent = "";
-    for (const block of claudeData.content || []) {
-      if (block.type === "text") textContent += block.text;
-    }
+    const aiData = await aiResponse.json();
+    let textContent = aiData.choices?.[0]?.message?.content || "";
 
     // Parse structured response
     let messageResult: { subject?: string; message: string; strategy_notes?: string };
