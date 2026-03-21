@@ -312,7 +312,7 @@ const ProspectMessage = () => {
                 {copiedMsg ? "Copié" : "Copier le message"}
               </Button>
 
-              {(messageType === "email" || messageType === "initial") && (
+              {((research as any)?.channel || "email") === "email" && (
                 <Button
                   variant="ghost"
                   size="sm"
