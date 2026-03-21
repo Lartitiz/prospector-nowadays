@@ -166,9 +166,12 @@ const ProspectMessage = () => {
 
       if (fnData?.message_id) {
         toast.success("Nouveau message généré");
-        navigate(`/prospects/${id}/message/${fnData.message_id}`, { replace: true });
-        // Reload with new message
-        window.location.reload();
+        if (fnData.message_id !== msgId) {
+          navigate(`/prospects/${id}/message/${fnData.message_id}`, { replace: true });
+        }
+        setSubject(fnData.subject || "");
+        setContent(fnData.message || "");
+        setStrategyNotes(fnData.strategy_notes || "");
       } else {
         throw new Error(fnData?.error || "Erreur lors de la régénération");
       }
