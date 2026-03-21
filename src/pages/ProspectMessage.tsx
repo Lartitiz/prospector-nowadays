@@ -232,8 +232,8 @@ const ProspectMessage = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* ═══ Main zone (70%) ═══ */}
           <div className="flex-1 lg:max-w-[70%] space-y-4">
-            {/* Subject (email/initial) */}
-            {(messageType === "email" || messageType === "initial") && (
+            {/* Subject (email channel) */}
+            {((research as any)?.channel || "email") === "email" && (
               <div className="space-y-1.5">
                 <Label htmlFor="msg-subject" className="text-xs text-muted-foreground uppercase tracking-wide">
                   Objet
@@ -312,7 +312,7 @@ const ProspectMessage = () => {
                 {copiedMsg ? "Copié" : "Copier le message"}
               </Button>
 
-              {(messageType === "email" || messageType === "initial") && (
+              {((research as any)?.channel || "email") === "email" && (
                 <Button
                   variant="ghost"
                   size="sm"
