@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const TIMEOUT_MS = 45_000;
+const TIMEOUT_MS = 120_000;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -121,7 +121,7 @@ Sois factuel. Si une information n'est pas trouvée, laisse le champ vide ou mar
         .eq("id", prospect_id);
 
       return new Response(
-        JSON.stringify({ error: isTimeout ? "La recherche a dépassé le délai de 45 secondes. Réessayez." : "Erreur lors de l'appel à Claude." }),
+        JSON.stringify({ error: isTimeout ? "La recherche a dépassé le délai de 120 secondes. Réessayez." : "Erreur lors de l'appel à Claude." }),
         { status: isTimeout ? 504 : 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
