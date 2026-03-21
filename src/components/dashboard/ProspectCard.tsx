@@ -46,8 +46,8 @@ const ProspectCard = ({ prospect, index }: Props) => {
               <span
                 className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0"
                 style={{
-                  backgroundColor: STRUCTURE_TYPE_COLORS[typeStructure] || "hsl(0,0%,80%)",
-                  color: "white",
+                  backgroundColor: STRUCTURE_TYPE_COLORS[typeStructure] || "#9E9E9E",
+                  color: STRUCTURE_TYPE_COLORS[typeStructure] === "#FFE561" ? "#1A1A1A" : "white",
                 }}
               >
                 {typeStructure}

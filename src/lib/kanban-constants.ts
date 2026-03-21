@@ -25,9 +25,13 @@ export const INTENTION_BADGES: Record<string, string> = {
 };
 
 export const STRUCTURE_TYPE_COLORS: Record<string, string> = {
-  entreprise: "hsl(210, 60%, 55%)",
-  association: "hsl(280, 50%, 55%)",
-  collectivite: "hsl(150, 50%, 45%)",
-  startup: "hsl(340, 70%, 55%)",
-  institution: "hsl(30, 60%, 50%)",
+  "coopérative": "#FB3D80",
+  "association": "#91014b",
+  "PME engagée": "#1A1A1A",
+  "tiers-lieu": "#FFE561",
+  "solopreneuse": "#FFA7C6",
+  "école": "#5C6BC0",
+  "institution": "#5C6BC0",
+  "projet local": "#4CAF50",
+  "autre": "#9E9E9E",
 };
