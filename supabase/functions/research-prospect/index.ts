@@ -121,7 +121,7 @@ Sois factuel. Si une information n'est pas trouvée, laisse le champ vide ou mar
         .eq("id", prospect_id);
 
       return new Response(
-        JSON.stringify({ error: isTimeout ? "La recherche a dépassé le délai de 45 secondes. Réessayez." : "Erreur lors de l'appel à Claude." }),
+        JSON.stringify({ error: isTimeout ? "La recherche a dépassé le délai de 120 secondes. Réessayez." : "Erreur lors de l'appel à Claude." }),
         { status: isTimeout ? 504 : 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
