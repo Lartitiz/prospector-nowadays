@@ -29,7 +29,19 @@ const QualityBadge = ({ level }: { level: string }) => {
   );
 };
 
-const ImmersionCard = ({ research, onChange }: Props) => {
+const ImmersionCard = ({ research: raw, onChange }: Props) => {
+  const research: ResearchResult = {
+    ...raw,
+    mission: raw.mission || "",
+    secteur: raw.secteur || "",
+    projets_recents: Array.isArray(raw.projets_recents) ? raw.projets_recents : [],
+    besoins_com: Array.isArray(raw.besoins_com) ? raw.besoins_com : [],
+    details_immersion: Array.isArray(raw.details_immersion) ? raw.details_immersion : [],
+    contact_suggere: raw.contact_suggere || { nom: "", role: "", email: "", linkedin: "" },
+    sources: Array.isArray(raw.sources) ? raw.sources : [],
+    qualite_recherche: raw.qualite_recherche || "low",
+  };
+
   const update = <K extends keyof ResearchResult>(key: K, value: ResearchResult[K]) => {
     onChange({ ...research, [key]: value });
   };
