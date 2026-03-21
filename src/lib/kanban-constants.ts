@@ -19,7 +19,7 @@ export const ALL_STATUSES = [...KANBAN_STATUSES, ...COLLAPSED_STATUSES];
 export type StatusId = (typeof ALL_STATUSES)[number]["id"];
 
 export const INTENTION_BADGES: Record<string, string> = {
-  cible: "🎯",
+  accompagnement: "🎯",
   formation: "🎓",
   contact: "👋",
 };
