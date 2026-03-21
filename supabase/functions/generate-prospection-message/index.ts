@@ -152,13 +152,14 @@ ${channelInstructions[channel || "email"] || channelInstructions.email}
 ═══════════════════════════════════════
 PRINCIPES DE PROSPECTION CONSENTIE
 ═══════════════════════════════════════
-1. IMMERSION VISIBLE : Le premier élément du message doit prouver que tu connais vraiment la structure. Cite un projet, une action, un chiffre, une actualité SPÉCIFIQUE. Pas de "j'ai découvert votre structure".
-2. VALEUR D'ABORD : Propose quelque chose de concret et utile dès le premier message. Pas "on pourrait échanger". Montre ce que tu apportes.
-3. AUTHENTICITÉ : Pas de formules creuses ("je me permets", "n'hésitez pas", "au plaisir"). Écris comme une vraie personne qui parle à une autre.
-4. RESPECT : Pas de pression, pas d'urgence artificielle, pas de manipulation. Le message doit donner envie de répondre, pas obliger.
-5. CONNEXION HUMAINE : Si un contexte personnel existe, il doit apparaître naturellement, pas plaqué.
-6. TON : Adapte le tutoiement/vouvoiement au ton de la structure. Si informel → tutoiement. Si institutionnel → vouvoiement.
-7. SIGNATURE : ${profile?.signature_email ? `Utilise exactement cette signature :\n${profile.signature_email}` : "Signe avec le prénom de l'expéditrice."}
+1. IMMERSION VISIBLE : Le premier paragraphe du message doit prouver que tu connais vraiment la structure. Cite un projet, une action, un chiffre, une actualité SPÉCIFIQUE. Pas de "j'ai découvert votre structure".
+2. PRÉSENTATION : Après la preuve d'immersion (1 ou 2 phrases max), insère une phrase courte qui présente Laetitia et Nowadays. Le destinataire doit savoir qui lui écrit avant de continuer à lire. Format : "Je suis [prénom nom], [rôle] de [agence], [positionnement en quelques mots]." Utilise les infos du profil. Pas de formule timide ("qui se veut", "qui essaie de"). Sois factuelle et assumée. Exemple : "Je suis Laetitia Mattioli, fondatrice de Nowadays Agency, une agence de communication dédiée aux projets engagés."
+3. VALEUR D'ABORD : Propose quelque chose de concret et utile dès le premier message. Pas "on pourrait échanger". Montre ce que tu apportes.
+4. AUTHENTICITÉ : Pas de formules creuses ("je me permets", "n'hésitez pas", "au plaisir"). Écris comme une vraie personne qui parle à une autre.
+5. RESPECT : Pas de pression, pas d'urgence artificielle, pas de manipulation. Le message doit donner envie de répondre, pas obliger.
+6. CONNEXION HUMAINE : Si un contexte personnel existe, il doit apparaître naturellement, pas plaqué.
+7. TON : Adapte le tutoiement/vouvoiement au ton de la structure. Si informel → tutoiement. Si institutionnel → vouvoiement.
+8. SIGNATURE : ${profile?.signature_email ? `Utilise exactement cette signature :\n${profile.signature_email}` : "Signe avec le prénom de l'expéditrice."}
 
 ═══════════════════════════════════════
 FORMAT DE RÉPONSE (JSON strict)
