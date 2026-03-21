@@ -28,8 +28,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY non configurée. Ajoutez-la dans les secrets Supabase." }), {
+    if (!lovableApiKey) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY non configurée." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
