@@ -27,6 +27,9 @@ const INTENTION_LABELS: Record<string, string> = {
   contact: "👋 Prise de contact",
 };
 
+const stripCiteTags = (text: string) =>
+  text.replace(/<\/?cite[^>]*>/gi, "");
+
 const ProspectMessage = () => {
   const { id, msgId } = useParams<{ id: string; msgId: string }>();
   const navigate = useNavigate();
@@ -397,7 +400,7 @@ const ProspectMessage = () => {
                     <div>
                       <p className="text-xs font-medium text-foreground mb-0.5">Mission</p>
                       <p className="text-muted-foreground text-xs leading-relaxed">
-                        {research.mission}
+                        {stripCiteTags(research.mission)}
                       </p>
                     </div>
                   )}
@@ -409,7 +412,7 @@ const ProspectMessage = () => {
                         {research.details_immersion.slice(0, 5).map((d, i) => (
                           <li key={i} className="text-xs text-muted-foreground flex gap-1.5">
                             <span className="text-primary mt-0.5 shrink-0">●</span>
-                            <span>{d}</span>
+                            <span>{stripCiteTags(d)}</span>
                           </li>
                         ))}
                       </ul>
