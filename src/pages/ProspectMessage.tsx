@@ -370,6 +370,9 @@ const ProspectMessage = () => {
                     {prospect.poste && <span className="opacity-70"> · {prospect.poste}</span>}
                   </p>
                 )}
+                {prospect?.email && (
+                  <p className="text-muted-foreground text-xs break-all">{prospect.email}</p>
+                )}
                 {ri?.intention && (
                   <p className="text-xs mt-2">
                     {INTENTION_LABELS[ri.intention] || ri.intention}
