@@ -64,8 +64,28 @@ const ProspectMessage = () => {
       return;
     }
 
-    setSubject(msg.sujet || "");
-    setContent(msg.contenu || "");
+    // Handle case where contenu contains raw JSON from edge function
+    let parsedSubject = msg.sujet || "";
+    let parsedContent = msg.contenu || "";
+    try {
+      const parsed = JSON.parse(parsedContent);
+      if (parsed && typeof parsed === "object" && parsed.message) {
+        parsedContent = parsed.message;
+        if (!parsedSubject && parsed.subject) {
+          parsedSubject = parsed.subject;
+          // Also fix in DB
+          supabase.from("messages").update({ sujet: parsed.subject, contenu: parsed.message }).eq("id", msgId!);
+        }
+        if (parsed.strategy_notes) {
+          setStrategyNotes(parsed.strategy_notes);
+        }
+      }
+    } catch {
+      // Not JSON, use as-is
+    }
+
+    setSubject(parsedSubject);
+    setContent(parsedContent);
     setMessageType(msg.type);
 
     if (prospectData) {
