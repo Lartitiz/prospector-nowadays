@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 import { ArrowLeft, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import type { Prospect } from "@/hooks/useProspects";
-import type { ResearchResult } from "@/lib/research-types";
+import { type ResearchResult, sanitizeResearch } from "@/lib/research-types";
 
 const INTENTIONS = [
   {
@@ -87,7 +87,7 @@ const GenerateMessage = () => {
     }
 
     setProspect(data as Prospect);
-    setResearch((data.recherche_ia as unknown as ResearchResult) || null);
+    setResearch(sanitizeResearch(data.recherche_ia as any));
 
     // Restore previous intention if set
     const ri = data.recherche_ia as any;
