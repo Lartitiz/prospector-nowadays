@@ -39,6 +39,20 @@ import { STRUCTURE_TYPES, SOURCE_OPTIONS, type ResearchResult } from "@/lib/rese
 import { ALL_STATUSES } from "@/lib/kanban-constants";
 import { cn } from "@/lib/utils";
 
+const stripCiteTags = (text: string) => text.replace(/<\/?cite[^>]*>/gi, "");
+
+const sanitizeResearch = (ri: any): any => {
+  if (!ri) return ri;
+  const clean = { ...ri };
+  if (typeof clean.mission === "string") clean.mission = stripCiteTags(clean.mission);
+  if (typeof clean.secteur === "string") clean.secteur = stripCiteTags(clean.secteur);
+  if (Array.isArray(clean.projets_recents)) clean.projets_recents = clean.projets_recents.map((p: any) => ({ ...p, titre: stripCiteTags(p.titre || ""), description: stripCiteTags(p.description || "") }));
+  if (Array.isArray(clean.besoins_com)) clean.besoins_com = clean.besoins_com.map((b: any) => ({ ...b, titre: stripCiteTags(b.titre || ""), description: stripCiteTags(b.description || "") }));
+  if (Array.isArray(clean.details_immersion)) clean.details_immersion = clean.details_immersion.map((d: string) => stripCiteTags(d));
+  if (clean.contact_suggere) clean.contact_suggere = { ...clean.contact_suggere, nom: stripCiteTags(clean.contact_suggere.nom || ""), role: stripCiteTags(clean.contact_suggere.role || "") };
+  return clean;
+};
+
 const PRIORITY_OPTIONS = [
   { value: "haute", label: "🔴 Haute" },
   { value: "moyenne", label: "🟡 Moyenne" },
