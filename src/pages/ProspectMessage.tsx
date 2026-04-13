@@ -87,8 +87,8 @@ const ProspectMessage = () => {
 
     if (prospectData) {
       setProspect(prospectData as Prospect);
-      const ri = prospectData.recherche_ia as unknown as ResearchResult & { strategy_notes?: string };
-      setResearch(ri || null);
+      const ri = sanitizeResearch(prospectData.recherche_ia as any) as (ResearchResult & { strategy_notes?: string }) | null;
+      setResearch(ri);
       setStrategyNotes(ri?.strategy_notes || "");
     }
 
