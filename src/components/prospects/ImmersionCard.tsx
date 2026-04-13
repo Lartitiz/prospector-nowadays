@@ -5,8 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, X, ExternalLink } from "lucide-react";
 import type { ResearchResult } from "@/lib/research-types";
-
-const stripCiteTags = (text: string) => text.replace(/<\/?cite[^>]*>/gi, "");
+import { stripCiteTags } from "@/lib/research-types";
 
 interface Props {
   research: ResearchResult;

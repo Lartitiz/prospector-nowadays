@@ -19,16 +19,13 @@ import {
   ClipboardList,
 } from "lucide-react";
 import type { Prospect } from "@/hooks/useProspects";
-import type { ResearchResult } from "@/lib/research-types";
+import { type ResearchResult, stripCiteTags, sanitizeResearch } from "@/lib/research-types";
 
 const INTENTION_LABELS: Record<string, string> = {
   accompagnement: "🎯 Accompagnement com",
   formation: "🎓 Partenariat formation",
   contact: "👋 Prise de contact",
 };
-
-const stripCiteTags = (text: string) =>
-  text.replace(/<\/?cite[^>]*>/gi, "");
 
 const ProspectMessage = () => {
   const { id, msgId } = useParams<{ id: string; msgId: string }>();
@@ -90,8 +87,8 @@ const ProspectMessage = () => {
 
     if (prospectData) {
       setProspect(prospectData as Prospect);
-      const ri = prospectData.recherche_ia as unknown as ResearchResult & { strategy_notes?: string };
-      setResearch(ri || null);
+      const ri = sanitizeResearch(prospectData.recherche_ia as any) as (ResearchResult & { strategy_notes?: string }) | null;
+      setResearch(ri);
       setStrategyNotes(ri?.strategy_notes || "");
     }
 

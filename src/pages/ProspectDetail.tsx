@@ -35,7 +35,7 @@ import {
   Eye,
 } from "lucide-react";
 import ImmersionCard from "@/components/prospects/ImmersionCard";
-import { STRUCTURE_TYPES, SOURCE_OPTIONS, type ResearchResult } from "@/lib/research-types";
+import { STRUCTURE_TYPES, SOURCE_OPTIONS, type ResearchResult, sanitizeResearch, stripCiteTags } from "@/lib/research-types";
 import { ALL_STATUSES } from "@/lib/kanban-constants";
 import { cn } from "@/lib/utils";
 
@@ -143,7 +143,7 @@ const ProspectDetail = () => {
 
     const ri = p.recherche_ia as any;
     if (ri) {
-      setResearch(ri as ResearchResult);
+      setResearch(sanitizeResearch(ri) as ResearchResult);
       setSiteWeb(ri.site_web || "");
       setTypeStructure(ri.type_structure || "");
       setSource(ri.source || "");
