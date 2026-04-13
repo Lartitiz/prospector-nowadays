@@ -34,12 +34,12 @@ const QualityBadge = ({ level }: { level: string }) => {
 const ImmersionCard = ({ research: raw, onChange }: Props) => {
   const research: ResearchResult = {
     ...raw,
-    mission: raw.mission || "",
-    secteur: raw.secteur || "",
-    projets_recents: Array.isArray(raw.projets_recents) ? raw.projets_recents : [],
-    besoins_com: Array.isArray(raw.besoins_com) ? raw.besoins_com : [],
-    details_immersion: Array.isArray(raw.details_immersion) ? raw.details_immersion : [],
-    contact_suggere: raw.contact_suggere || { nom: "", role: "", email: "", linkedin: "" },
+    mission: stripCiteTags(raw.mission || ""),
+    secteur: stripCiteTags(raw.secteur || ""),
+    projets_recents: Array.isArray(raw.projets_recents) ? raw.projets_recents.map(p => ({ ...p, titre: stripCiteTags(p.titre), description: stripCiteTags(p.description) })) : [],
+    besoins_com: Array.isArray(raw.besoins_com) ? raw.besoins_com.map(b => ({ ...b, titre: stripCiteTags(b.titre), description: stripCiteTags(b.description) })) : [],
+    details_immersion: Array.isArray(raw.details_immersion) ? raw.details_immersion.map(d => stripCiteTags(d)) : [],
+    contact_suggere: raw.contact_suggere ? { nom: stripCiteTags(raw.contact_suggere.nom), role: stripCiteTags(raw.contact_suggere.role), email: raw.contact_suggere.email, linkedin: raw.contact_suggere.linkedin } : { nom: "", role: "", email: "", linkedin: "" },
     sources: Array.isArray(raw.sources) ? raw.sources : [],
     qualite_recherche: raw.qualite_recherche || "low",
   };
