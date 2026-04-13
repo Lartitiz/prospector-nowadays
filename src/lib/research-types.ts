@@ -42,3 +42,17 @@ export const LOADING_MESSAGES = [
   "Analyse de la mission et des projets…",
   "Synthèse des informations trouvées…",
 ];
+
+export const stripCiteTags = (text: string) => text.replace(/<\/?cite[^>]*>/gi, "");
+
+export const sanitizeResearch = (ri: any): ResearchResult | null => {
+  if (!ri) return null;
+  const clean = { ...ri };
+  if (typeof clean.mission === "string") clean.mission = stripCiteTags(clean.mission);
+  if (typeof clean.secteur === "string") clean.secteur = stripCiteTags(clean.secteur);
+  if (Array.isArray(clean.projets_recents)) clean.projets_recents = clean.projets_recents.map((p: any) => ({ ...p, titre: stripCiteTags(p.titre || ""), description: stripCiteTags(p.description || "") }));
+  if (Array.isArray(clean.besoins_com)) clean.besoins_com = clean.besoins_com.map((b: any) => ({ ...b, titre: stripCiteTags(b.titre || ""), description: stripCiteTags(b.description || "") }));
+  if (Array.isArray(clean.details_immersion)) clean.details_immersion = clean.details_immersion.map((d: string) => stripCiteTags(d));
+  if (clean.contact_suggere) clean.contact_suggere = { ...clean.contact_suggere, nom: stripCiteTags(clean.contact_suggere.nom || ""), role: stripCiteTags(clean.contact_suggere.role || "") };
+  return clean as ResearchResult;
+};
