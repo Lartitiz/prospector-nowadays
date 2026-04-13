@@ -157,7 +157,7 @@ const ProspectDetail = () => {
 
     const ri = p.recherche_ia as any;
     if (ri) {
-      setResearch(ri as ResearchResult);
+      setResearch(sanitizeResearch(ri) as ResearchResult);
       setSiteWeb(ri.site_web || "");
       setTypeStructure(ri.type_structure || "");
       setSource(ri.source || "");
