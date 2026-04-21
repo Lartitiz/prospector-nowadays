@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
-import { format, differenceInDays } from "date-fns";
+import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   ArrowLeft,
@@ -210,13 +210,9 @@ const ProspectDetail = () => {
     }
   };
 
-  // Determine if "Générer une relance" should show
-  const showRelance = useMemo(() => {
-    if (statut !== "contacte") return false;
-    if (messages.length === 0) return false;
-    const lastMsg = messages[0]; // already sorted desc
-    return differenceInDays(new Date(), new Date(lastMsg.created_at)) >= 7;
-  }, [statut, messages]);
+  // Show "Générer une relance" as soon as at least one message exists
+  const showRelance = messages.length > 0;
+  const lastMessageId = messages[0]?.id;
 
   if (loading) {
     return (
@@ -454,6 +450,14 @@ const ProspectDetail = () => {
                     >
                       <Eye className="h-3.5 w-3.5" /> Voir
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate(`/prospects/${id}/generate-relance/${msg.id}`)}
+                      className="shrink-0 gap-1 text-xs"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" /> Relancer
+                    </Button>
                   </div>
                 );
               })}
@@ -482,7 +486,7 @@ const ProspectDetail = () => {
           </Button>
           {showRelance && (
             <Button
-              onClick={() => navigate(`/prospects/${id}/generate`)}
+              onClick={() => navigate(`/prospects/${id}/generate-relance/${lastMessageId}`)}
               variant="secondary"
               className="gap-2 flex-1"
             >
