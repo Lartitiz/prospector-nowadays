@@ -87,29 +87,33 @@ Deno.serve(async (req) => {
 
     const tonaliteInstructions: Record<string, string> = {
       doux:
-        "Rappel très léger, bienveillant, sans aucune pression. Tu reviens simplement aux nouvelles. Aucune urgence.",
+        "Bienveillant, sans pression. Garde la formule \"J'imagine que vous êtes débordés, mais je voulais savoir si l'idée de [thème] vous intéresserait\".",
       direct:
-        "Tu demandes clairement si le message précédent a un écho, sans agressivité. Tu proposes éventuellement un créneau ou une suite concrète.",
+        "Tu enlèves le \"j'imagine que vous êtes débordés\". Tu demandes clairement un retour, sans agressivité, et tu proposes un créneau concret.",
       derniere:
-        "Tu signifies poliment que c'est ta dernière prise de contact, pour ne pas insister davantage. Tu laisses la porte ouverte mais tu fermes le fil.",
+        "Tu fermes proprement : \"je n'insisterai pas davantage, mais la porte reste ouverte si l'idée mûrit\". Pas de proposition de créneau insistante.",
     };
 
     const channelLength: Record<string, string> = {
-      email: "50 à 100 mots maximum. Objet court et personnel.",
-      linkedin: "50 mots maximum. Pas d'objet.",
-      instagram: "40 mots maximum. Très direct, conversationnel. Pas d'objet.",
+      email: "80 à 120 mots. Objet court et personnel (ex: \"On en reparle ?\", \"Petite relance\").",
+      linkedin: "60 à 70 mots maximum. Pas d'objet. Version condensée mais qui garde la mini-présentation.",
+      instagram: "60 mots maximum. Pas d'objet. Très conversationnel, salutation individualisée si possible.",
     };
 
     const ch = channel || "email";
+    const senderFirstName = (profile?.nom || "").split(" ")[0] || "Laetitia";
 
-    const prompt = `Tu es une experte en prospection consentie. Tu rédiges une RELANCE après un premier message resté sans réponse. Le destinataire a déjà reçu le message ci-dessous, il faut éviter de le paraphraser.
+    const prompt = `Tu es une experte en prospection consentie. Tu rédiges une RELANCE après un premier message resté sans réponse. Tu dois reproduire FIDÈLEMENT le style de Laetitia Mattioli (exemple plus bas).
 
 ═══════════════════════════════════════
 EXPÉDITRICE
 ═══════════════════════════════════════
 ${profile ? `Nom : ${profile.nom || ""}
+Prénom : ${senderFirstName}
 Rôle : ${profile.role || ""}
-Signature email : ${profile.signature_email || ""}` : "Profil non disponible."}
+Pitch : ${profile.pitch || ""}
+Spécialité : ${profile.specialite || ""}
+Signature email complète : ${profile.signature_email || ""}` : "Profil non disponible."}
 
 ═══════════════════════════════════════
 DESTINATAIRE
@@ -135,15 +139,39 @@ CANAL : ${ch.toUpperCase()}
 ${channelLength[ch] || channelLength.email}
 
 ═══════════════════════════════════════
-RÈGLES DE RÉDACTION
+EXEMPLE DE RÉFÉRENCE (style à reproduire — email, tonalité douce)
 ═══════════════════════════════════════
-1. COURT. Une relance n'est pas un nouveau message complet : pas de pitch, pas de présentation longue.
-2. RÉFÉRENCE IMPLICITE au premier message ("comme évoqué", "pour reprendre notre échange", "je reviens vers vous suite à mon mot").
-3. AUCUNE PARAPHRASE du premier message — apporte UN angle neuf : une question, une actualité de la structure, une précision concrète.
-4. PAS DE FORMULES CREUSES ("je me permets", "n'hésitez pas", "au plaisir").
-5. PAS DE PRESSION sauf si tonalité = "derniere", auquel cas la fermeture doit rester respectueuse.
-6. SIGNATURE : ${profile?.signature_email && ch === "email" ? `utilise exactement : ${profile.signature_email}` : "signe simplement avec le prénom de l'expéditrice."}
-7. Reprends le tutoiement/vouvoiement utilisé dans le message précédent.
+Bonjour à toute l'équipe du 104factory,
+
+Je vous recontacte suite à mon dernier message.
+
+J'imagine que vous êtes débordés, mais je voulais savoir si l'idée de formation en communication vous intéresserait.
+
+Je m'appelle Laetitia Mattioli, je suis fondatrice de Nowadays Agency. J'accompagne des designers, artisan·e·s et des créateur·ices à se faire connaître en ligne (Instagram, site web, SEO, emailing).
+
+Si ça vous parle, je suis disponible pour un échange de 30 minutes en visio la semaine prochaine.
+
+Bonne journée à vous,
+
+Laetitia Mattioli
+
+═══════════════════════════════════════
+STRUCTURE OBLIGATOIRE (5 mouvements courts)
+═══════════════════════════════════════
+1. SALUTATION COLLECTIVE — "Bonjour à toute l'équipe du ${structureName}," par défaut. Si un prénom de contact est connu (${contactName || "aucun"}) ET qu'il a été utilisé dans le message précédent, alors "Bonjour ${contactName ? contactName.split(" ")[0] : "[prénom]"},".
+2. PHRASE DE RELANCE DIRECTE — "Je vous recontacte suite à mon dernier message." (ou variante très proche).
+3. QUESTION DOUCE qui reformule l'enjeu du 1er message en UNE phrase, sans paraphraser : "je voulais savoir si l'idée de [thème principal] vous intéresserait".
+4. MINI RE-PRÉSENTATION (1-2 phrases) — Reprends l'essentiel du pitch (${profile?.pitch ? "voir Pitch ci-dessus" : "Nowadays Agency"}), pas un pitch complet. La personne a peut-être oublié le 1er message.
+5. PROPOSITION CONCRÈTE + SIGNATURE — "Si ça vous parle, je suis disponible pour un échange de 30 minutes en visio la semaine prochaine." puis "Bonne journée à vous,\\n\\n${senderFirstName}" (signature courte au prénom, PAS la signature email complète).
+
+═══════════════════════════════════════
+RÈGLES STRICTES
+═══════════════════════════════════════
+- Pas de formules creuses ("je me permets", "n'hésitez pas", "au plaisir").
+- Pas de paraphrase du message précédent — juste reformuler l'ENJEU sous forme de question.
+- Reprends le tutoiement/vouvoiement utilisé dans le message précédent (le vouvoiement par défaut).
+- Pour LinkedIn/Instagram : condense mais garde les 5 mouvements (salutation peut être individualisée).
+- Pour la tonalité "derniere", remplace le mouvement 5 par une fermeture douce sans proposition de créneau insistante.
 
 ═══════════════════════════════════════
 FORMAT DE RÉPONSE (JSON strict)
@@ -151,7 +179,7 @@ FORMAT DE RÉPONSE (JSON strict)
 Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
 {
   "subject": "objet de la relance (vide si LinkedIn ou Instagram)",
-  "message": "corps complet de la relance, prêt à envoyer, avec signature",
+  "message": "corps complet de la relance avec sauts de ligne \\n, prêt à envoyer, signé au prénom",
   "strategy_notes": "1-2 phrases expliquant l'angle choisi pour cette relance"
 }`;
 
