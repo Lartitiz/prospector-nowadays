@@ -1,71 +1,53 @@
+## Caler les relances sur ton style réel
 
+### Ce que tu fais d'habitude (analyse de ton exemple)
 
-## Permettre de générer des relances facilement
+Ta relance suit une structure très claire en **5 mouvements courts** :
 
-### Problème actuel
+1. **Salutation collective** — "Bonjour à toute l'équipe du [structure]"
+2. **Phrase de relance directe** — "Je vous recontacte suite à mon dernier message."
+3. **Question douce qui reformule l'enjeu** — "J'imagine que vous êtes débordés, mais je voulais savoir si l'idée de [X] vous intéresserait."
+4. **Mini re-présentation** (1-2 phrases) — "Je m'appelle Laetitia Mattioli, je suis fondatrice de Nowadays Agency. J'accompagne…"
+5. **Proposition concrète + signature** — "Si ça vous parle, je suis disponible pour un échange de 30 minutes en visio la semaine prochaine."
 
-Le bouton "Générer une relance" existe déjà sur la fiche prospect, mais il est **caché** :
-- Il ne s'affiche que si le statut = "Contacté·e"
-- ET si le dernier message date d'au moins 7 jours
+Le ton est : **bienveillant, sans pression, direct, sans formule creuse**, avec une **mini-représentation assumée** (parce que la personne a peut-être oublié le premier message).
 
-Sur la fiche que tu regardes, le statut n'est probablement pas "Contacté·e", donc le bouton n'apparaît pas. De plus, même quand il apparaît, il renvoie vers la même page de génération qu'un premier message — il ne génère pas vraiment une vraie relance qui tient compte du message déjà envoyé.
+Aujourd'hui, mon prompt actuel **interdit la re-présentation** ("pas de pitch, pas de présentation longue") — c'est l'inverse de ce que tu fais. Il faut le corriger.
 
-### Ce qu'on va faire
+### Ce qu'on va changer
 
-**1. Toujours rendre la relance accessible**
-- Sur la fiche prospect, ajouter un bouton "Générer une relance" à côté de chaque message dans l'historique (icône RefreshCw + "Relancer")
-- Le bouton apparaît dès qu'au moins un message a été envoyé, sans contrainte de délai ni de statut
-- Garder le bouton actuel en bas de page mais le rendre toujours visible si ≥ 1 message existe
+**Refonte du prompt `generate-relance**` pour reproduire ton style :
 
-**2. Vraie page de génération de relance**
-- Nouvelle route `/prospects/:id/generate-relance/:messageId`
-- Page qui pré-affiche le message original (envoyé) en encart "Message précédent"
-- Champs adaptés à la relance :
-  - Tonalité : doux (rappel léger) / direct (réponse claire demandée) / dernière tentative
-  - Note contextuelle optionnelle (ex : "ils ont vu mais pas répondu", "je les ai recroisés depuis")
-  - Canal (pré-rempli avec celui du message original)
-- Bouton "Générer la relance"
+- **Structure imposée en 5 mouvements** (les 5 ci-dessus), explicitement décrits dans le prompt
+- **Salutation** : "Bonjour à toute l'équipe du [entreprise]" par défaut (collectif), sauf si un prénom de contact est connu et qu'il a été utilisé dans le 1er message 
+- **Mini re-présentation autorisée et encouragée** : 1-2 phrases reprenant l'essentiel du pitch profil (Nowadays Agency, ce qu'on accompagne) — pas un pitch complet, juste un rappel
+- **Reformulation de l'enjeu sous forme de question** : "je voulais savoir si l'idée de [thème principal du 1er message] vous intéresserait"
+- **Proposition concrète à la fin** : créneau visio 30 min la semaine prochaine (par défaut), adaptable selon tonalité
+- **Signature** : "Bonne journée à vous, [prénom]" — pas la signature email complète qui rallongerait inutilement
+- **Longueur cible** : 80-120 mots (un peu plus généreux qu'avant pour permettre la mini-présentation)
+- **Exemple en few-shot** dans le prompt : on donne ton email exact à Claude comme référence de style
 
-**3. Edge function `generate-relance`**
-- Nouvelle fonction (ou extension de `generate-prospection-message` avec un mode `relance`)
-- Reçoit : prospect_id, message_id_original, tonalite, note_contextuelle, canal
-- Construit un prompt Claude qui :
-  - Reprend la fiche d'immersion du prospect
-  - Inclut le contenu du message initial déjà envoyé
-  - Demande une relance courte, naturelle, qui ne paraphrase pas le premier message
-  - Adapte la tonalité demandée
-- Sauvegarde le message en base avec `type = "relance"` (déjà géré dans `TYPE_BADGE_COLORS`)
-- Met à jour le statut du prospect en `relance`
+**Adaptation par tonalité** :
 
-**4. Affichage**
-- Le badge "relance" est déjà stylé (ambre) dans l'historique des messages
-- La page `ProspectMessage` affichera correctement la relance générée (réutilise l'existant)
+- **Doux** → ton exemple tel quel, "j'imagine que vous êtes débordés"
+- **Direct** → on enlève le "j'imagine que vous êtes débordés", on demande clairement un retour
+- **Dernière tentative** → on ferme proprement : "je n'insisterai pas davantage, mais la porte reste ouverte si l'idée mûrit"
+
+**Adaptation par canal** :
+
+- **Email** → structure complète avec objet ("On en reparle ?", "Petite relance", etc.)
+- **LinkedIn / Instagram** → pas d'objet, version condensée (60-70 mots), salutation individualisée si possible
 
 ### Détails techniques
 
-**Fichiers modifiés**
-- `src/pages/ProspectDetail.tsx` : ajouter bouton "Relancer" sur chaque ligne de l'historique des messages, et toujours afficher le bouton en bas si messages.length > 0
-- `src/App.tsx` : nouvelle route `/prospects/:id/generate-relance/:messageId`
+**Fichier modifié** : `supabase/functions/generate-relance/index.ts`
 
-**Fichiers créés**
-- `src/pages/GenerateRelance.tsx` : nouvelle page de génération de relance (inspirée de `GenerateMessage.tsx`)
-- `supabase/functions/generate-relance/index.ts` : nouvelle edge function avec son propre prompt orienté relance
+- Réécriture complète du `prompt` avec structure imposée + few-shot example
+- Injection plus riche du `my_profile` (pitch, spécialité) pour nourrir la mini-représentation
+- Gestion fine signature courte vs `signature_email` selon le canal
 
-**Base de données**
-- Aucune migration nécessaire. La table `messages` a déjà un champ `type` qui acceptera `"relance"`.
-
-**Prompt Claude relance — principes**
-- Référence implicite au premier message ("comme évoqué", "pour reprendre notre échange")
-- Pas de répétition du pitch complet
-- Court (50-100 mots email, 50 mots LinkedIn/Insta)
-- Tonalité ajustée selon le choix
-- Pas de pression, pas de "dernier rappel" agressif sauf mode "dernière tentative"
+**Pas de migration DB ni de changement front** — tout se passe dans le prompt de l'edge function.
 
 ### Vérification
 
-Après implémentation :
-- Sur une fiche prospect avec ≥ 1 message, le bouton "Relancer" apparaît à côté de chaque message
-- Cliquer dessus ouvre la page de génération de relance avec le message original visible
-- La relance générée s'enregistre avec `type = "relance"` et apparaît avec le badge ambre dans l'historique
-- Le statut du prospect passe automatiquement à "Relancé·e"
-
+Après déploiement, générer une relance "doux/email" sur un prospect existant et comparer avec ton exemple : on doit retrouver la salutation collective, la phrase d'ouverture quasi identique, la mini-présentation Nowadays, et la proposition de visio 30 min.
