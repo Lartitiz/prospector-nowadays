@@ -197,8 +197,10 @@ Réponds UNIQUEMENT avec ce JSON, sans texte avant ni après :
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-opus-4-20250514",
-          max_tokens: 1024,
+          model: "claude-opus-5-5",
+          // Opus 5.5 réfléchit toujours : la réflexion compte dans max_tokens, d'où la marge
+          max_tokens: 8000,
+          output_config: { effort: "medium" },
           messages: [{ role: "user", content: prompt }],
         }),
       });
