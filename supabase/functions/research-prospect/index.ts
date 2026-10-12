@@ -97,8 +97,10 @@ Sois factuel. Si une information n'est pas trouvée, laisse le champ vide ou mar
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5-5",
           max_tokens: 4096,
+          // Sonnet 5.5 : niveau de réflexion le plus bas (équivalent du « sans thinking » de Sonnet 4)
+          thinking: { type: "between_tools" },
           tools: [
             {
               type: "web_search_20250305",
